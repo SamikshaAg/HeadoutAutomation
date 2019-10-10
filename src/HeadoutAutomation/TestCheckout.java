@@ -13,8 +13,9 @@ import org.testng.annotations.Test;
 
 public class TestCheckout {
 	
-  public Properties loadCardDetails() {
-	File file = new File("/HeadoutAutomationTest/src/HeadoutAutomation/cardDetails.properties");
+	//Function to create the fileInput object for the properties file
+  public FileInputStream loadCardDetails() {
+	File file = new File("C:\\Users\\samiagar\\eclipse-workspace\\HeadoutAutomationTest\\src\\HeadoutAutomation\\cardDetails.properties");
 	FileInputStream fileInput = null;
 	try {
 		fileInput = new FileInputStream(file);
@@ -22,30 +23,33 @@ public class TestCheckout {
 		e.printStackTrace();
 	}
 	
-	Properties prop = new Properties();
-	
-	try {
-		prop.load(fileInput);
-	} catch (IOException e) {
-		e.printStackTrace();
-	}
-	
-	return prop;
+	return fileInput;
   }
   
-  @Test(priority = 0)
-  public void agreeToTerms() {
+  //Function to agree to the terms and conditions checkbox
+  @Test(priority = 7)
+  public void agreeToTerms() throws InterruptedException {
+	  System.out.println("agree to terms");
+	  Thread.sleep(10000);
 	  WebElement terms = TestHomePagesVerification.driver.findElement(By.xpath("//strong[contains(text(),'I agree to Terms')]/../.."));
 	  terms.click();
 	  TestHomePagesVerification.driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
   }
   
-  @Test(priority = 1)
-  public void fillCardDetails() {
+  //Function to select the credit card as payment mode and fill out the details
+  @Test(priority = 8)
+  public void fillCardDetails() throws InterruptedException {
+	  System.out.println("fillcard details");
 	  WebElement paymentMode = TestHomePagesVerification.driver.findElement(By.xpath("//strong[text()='Credit or Debit Card']/../.."));
 	  paymentMode.click();
 	  
-	  Properties prop = loadCardDetails();
+	  Properties prop = new Properties();
+	  try {
+			prop.load(loadCardDetails());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@placeholder = 'John Doe']")).sendKeys(prop.getProperty("nameOnCard"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@placeholder = 'john@doe.com']")).sendKeys(prop.getProperty("userEmail"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@placeholder = '0333 700 8800']")).sendKeys(prop.getProperty("telephone"));
@@ -55,10 +59,16 @@ public class TestCheckout {
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@autocomplete = 'cc-number']")).sendKeys(prop.getProperty("ccNumber"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@autocomplete = 'cc-exp']")).sendKeys(prop.getProperty("ccExpiry"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@autocomplete = 'cc-csc']")).sendKeys(prop.getProperty("cvv"));
+	  
+	  Thread.sleep(5000);
   }
   
-  @Test(priority = 2)
-  public void finishBooking() {
+  //Function to finish the booking
+  @Test(priority = 9)
+  public void finishBooking() throws InterruptedException {
+	  System.out.println("finish booking");
 	  TestHomePagesVerification.driver.findElement(By.xpath("//div[@class = 'my--3']//child::button")).click();
+	  
+	  Thread.sleep(5000);
   }
 }
