@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.testng.annotations.Test;
 
 public class TestCheckout {
@@ -31,8 +33,18 @@ public class TestCheckout {
 	return prop;
   }
   
-  @Test
+  @Test(priority = 0)
+  public void agreeToTerms() {
+	  WebElement terms = TestHomePagesVerification.driver.findElement(By.xpath("//strong[contains(text(),'I agree to Terms')]/../.."));
+	  terms.click();
+	  TestHomePagesVerification.driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+  }
+  
+  @Test(priority = 1)
   public void fillCardDetails() {
+	  WebElement paymentMode = TestHomePagesVerification.driver.findElement(By.xpath("//strong[text()='Credit or Debit Card']/../.."));
+	  paymentMode.click();
+	  
 	  Properties prop = loadCardDetails();
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@placeholder = 'John Doe']")).sendKeys(prop.getProperty("nameOnCard"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@placeholder = 'john@doe.com']")).sendKeys(prop.getProperty("userEmail"));
@@ -43,5 +55,10 @@ public class TestCheckout {
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@autocomplete = 'cc-number']")).sendKeys(prop.getProperty("ccNumber"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@autocomplete = 'cc-exp']")).sendKeys(prop.getProperty("ccExpiry"));
 	  TestHomePagesVerification.driver.findElement(By.xpath("//input[@autocomplete = 'cc-csc']")).sendKeys(prop.getProperty("cvv"));
+  }
+  
+  @Test(priority = 2)
+  public void finishBooking() {
+	  TestHomePagesVerification.driver.findElement(By.xpath("//div[@class = 'my--3']//child::button")).click();
   }
 }
